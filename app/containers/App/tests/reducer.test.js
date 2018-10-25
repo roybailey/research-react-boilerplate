@@ -1,7 +1,14 @@
 import { fromJS } from 'immutable';
 
 import appReducer from '../reducer';
-import { loadRepos, reposLoaded, repoLoadingError } from '../actions';
+import {
+  loadRepos,
+  reposLoaded,
+  repoLoadingError,
+  loadTodos,
+  todosLoaded,
+  todosLoadingError,
+} from '../actions';
 
 describe('appReducer', () => {
   let state;
@@ -54,6 +61,47 @@ describe('appReducer', () => {
     const expectedResult = state.set('error', fixture).set('loading', false);
 
     expect(appReducer(state, repoLoadingError(fixture))).toEqual(
+      expectedResult,
+    );
+  });
+
+  //
+  // Load Todos
+  //
+
+  it('should handle the loadTodos action correctly', () => {
+    const expectedResult = state
+      .set('loading', true)
+      .set('error', false)
+      .setIn(['todoData', 'todos'], false);
+
+    expect(appReducer(state, loadTodos())).toEqual(expectedResult);
+  });
+
+  it('should handle the todosLoaded action correctly', () => {
+    const fixture = [
+      {
+        title: 'My Todo',
+      },
+    ];
+    const category = 'work';
+    const expectedResult = state
+      .setIn(['todoData', 'todos'], fixture)
+      .set('loading', false)
+      .set('category', category);
+
+    expect(appReducer(state, todosLoaded(fixture, category))).toEqual(
+      expectedResult,
+    );
+  });
+
+  it('should handle the todosLoadingError action correctly', () => {
+    const fixture = {
+      msg: 'Not found',
+    };
+    const expectedResult = state.set('error', fixture).set('loading', false);
+
+    expect(appReducer(state, todosLoadingError(fixture))).toEqual(
       expectedResult,
     );
   });

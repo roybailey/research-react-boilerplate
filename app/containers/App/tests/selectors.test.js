@@ -6,6 +6,7 @@ import {
   makeSelectLoading,
   makeSelectError,
   makeSelectRepos,
+  makeSelectTodos,
   makeSelectLocation,
 } from '../selectors';
 
@@ -70,6 +71,21 @@ describe('makeSelectRepos', () => {
       },
     });
     expect(reposSelector(mockedState)).toEqual(repositories);
+  });
+});
+
+describe('makeSelectTodos', () => {
+  const todosSelector = makeSelectTodos();
+  it('should select the todos', () => {
+    const todos = fromJS([]);
+    const mockedState = fromJS({
+      global: {
+        todoData: {
+          todos,
+        },
+      },
+    });
+    expect(todosSelector(mockedState)).toEqual(todos);
   });
 });
 
