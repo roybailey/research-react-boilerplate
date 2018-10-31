@@ -1,5 +1,7 @@
 import { fromJS } from 'immutable';
 
+import { LOAD_TODOS_SUCCESS } from '../constants';
+import appReducer from '../reducer';
 import {
   selectGlobal,
   makeSelectCurrentUser,
@@ -7,6 +9,7 @@ import {
   makeSelectError,
   makeSelectRepos,
   makeSelectTodos,
+  makeSelectTodosByCurrentStatus,
   makeSelectLocation,
 } from '../selectors';
 
@@ -77,7 +80,7 @@ describe('makeSelectRepos', () => {
 describe('makeSelectTodos', () => {
   const todosSelector = makeSelectTodos();
   it('should select the todos', () => {
-    const todos = fromJS([]);
+    const todos = fromJS([{ title: 'something' }]);
     const mockedState = fromJS({
       global: {
         todoData: {
@@ -86,6 +89,35 @@ describe('makeSelectTodos', () => {
       },
     });
     expect(todosSelector(mockedState)).toEqual(todos);
+  });
+});
+
+describe('makeSelectTodoByCurrentStatus', () => {
+  const todosSelector = makeSelectTodosByCurrentStatus();
+  it('should select the todos by status', () => {
+    const todos = [
+      { title: 'something todo', status: 'TODO' },
+      { title: 'in progress', status: 'WORK' },
+      { title: 'something done', status: 'DONE' },
+    ];
+    const todoInprogress = todos.filter(todo => todo.status === 'WORK');
+    expect(todoInprogress.length).toEqual(1);
+    let mockedState = fromJS({
+      global: {
+        todoData: {},
+      },
+    });
+    mockedState = mockedState.set(
+      'global',
+      appReducer(mockedState.get('global'), {
+        type: LOAD_TODOS_SUCCESS,
+        category: {
+          value: 'WORK',
+        },
+        todos,
+      }),
+    );
+    expect(todosSelector(mockedState)).toEqual(todoInprogress);
   });
 });
 

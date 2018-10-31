@@ -2,7 +2,6 @@
 
 const express = require('express');
 const logger = require('./logger');
-const uuid = require('uuid');
 
 const argv = require('./argv');
 const port = require('./port');
@@ -17,27 +16,7 @@ const app = express();
 
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 // app.use('/api', myApi);
-const faker = require('faker');
-const todos = [
-  {
-    id: uuid(),
-    title: 'Do something useful',
-    goal: 'get off my butt and do something productive',
-    status: 'NOT_STARTED',
-  },
-  {
-    id: uuid(),
-    title: `Phone ${faker.name.findName()}`,
-    goal: 'Sell them something for loads of money',
-    status: 'NOT_STARTED',
-  },
-  {
-    id: uuid(),
-    title: faker.lorem.words(),
-    goal: faker.lorem.sentence(),
-    status: 'NOT_STARTED',
-  },
-];
+const todos = require('./todos');
 const todoRouter = express.Router();
 todoRouter.get('/', (req, res) => {
   res.json(todos);

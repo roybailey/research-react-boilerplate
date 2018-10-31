@@ -7,7 +7,7 @@ describe('todoReducer', () => {
   let state;
   beforeEach(() => {
     state = fromJS({
-      category: '',
+      category: {},
     });
   });
 

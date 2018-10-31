@@ -29,6 +29,9 @@ const initialState = fromJS({
   userData: {
     repositories: false,
   },
+  todoData: {
+    todos: false,
+  },
 });
 
 function appReducer(state = initialState, action) {
@@ -45,18 +48,21 @@ function appReducer(state = initialState, action) {
         .set('currentUser', action.username);
     case LOAD_REPOS_ERROR:
       return state.set('error', action.error).set('loading', false);
+
     case LOAD_TODOS:
       return state
-        .set('loading', true)
-        .set('error', false)
+        .setIn(['todoData', 'loading'], true)
+        .setIn(['todoData', 'error'], false)
         .setIn(['todoData', 'todos'], false);
     case LOAD_TODOS_SUCCESS:
       return state
-        .setIn(['todoData', 'todos'], action.todos)
-        .set('loading', false)
-        .set('category', action.category);
+        .setIn(['todoData', 'loading'], false)
+        .setIn(['todoData', 'category'], action.category)
+        .setIn(['todoData', 'todos'], action.todos);
     case LOAD_TODOS_ERROR:
-      return state.set('error', action.error).set('loading', false);
+      return state
+        .setIn(['todoData', 'loading'], false)
+        .setIn(['todoData', 'error'], action.error);
     default:
       return state;
   }

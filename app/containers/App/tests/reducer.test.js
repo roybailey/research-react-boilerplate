@@ -20,6 +20,9 @@ describe('appReducer', () => {
       userData: fromJS({
         repositories: false,
       }),
+      todoData: fromJS({
+        todos: false,
+      }),
     });
   });
 
@@ -71,8 +74,8 @@ describe('appReducer', () => {
 
   it('should handle the loadTodos action correctly', () => {
     const expectedResult = state
-      .set('loading', true)
-      .set('error', false)
+      .setIn(['todoData', 'loading'], true)
+      .setIn(['todoData', 'error'], false)
       .setIn(['todoData', 'todos'], false);
 
     expect(appReducer(state, loadTodos())).toEqual(expectedResult);
@@ -87,8 +90,8 @@ describe('appReducer', () => {
     const category = 'work';
     const expectedResult = state
       .setIn(['todoData', 'todos'], fixture)
-      .set('loading', false)
-      .set('category', category);
+      .setIn(['todoData', 'loading'], false)
+      .setIn(['todoData', 'category'], category);
 
     expect(appReducer(state, todosLoaded(fixture, category))).toEqual(
       expectedResult,
@@ -99,7 +102,9 @@ describe('appReducer', () => {
     const fixture = {
       msg: 'Not found',
     };
-    const expectedResult = state.set('error', fixture).set('loading', false);
+    const expectedResult = state
+      .setIn(['todoData', 'error'], fixture)
+      .setIn(['todoData', 'loading'], false);
 
     expect(appReducer(state, todosLoadingError(fixture))).toEqual(
       expectedResult,

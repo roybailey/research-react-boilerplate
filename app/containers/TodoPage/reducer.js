@@ -14,7 +14,7 @@ import { fromJS } from 'immutable';
 import { CHANGE_CATEGORY } from './constants';
 
 // The initial state of the App
-export const initialState = fromJS({ category: '' });
+export const initialState = fromJS({ category: {} });
 
 function todoPageReducer(state = initialState, action) {
   switch (action.type) {

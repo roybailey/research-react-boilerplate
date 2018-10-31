@@ -10,12 +10,14 @@ import { compose } from 'redux';
 import { Helmet } from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
+import Select from 'react-select';
 
 import H1 from 'components/H1';
 import H2 from 'components/H2';
+import Button from 'components/Button';
 
 import {
-  makeSelectTodos,
+  makeSelectTodosByCurrentStatus,
   makeSelectLoading,
   makeSelectError,
 } from 'containers/App/selectors';
@@ -33,15 +35,23 @@ import reducer from './reducer';
 import saga from './saga';
 import { changeCategory } from '../TodoPage/actions';
 import Form from '../HomePage/Form';
-import Input from '../HomePage/Input';
 import { makeSelectTodoPageCategory } from '../TodoPage/selectors';
+
+const options = [
+  { value: 'NOT_STARTED', label: 'Todo' },
+  { value: 'IN_PROGRESS', label: 'In Progress' },
+  { value: 'FINISHED', label: 'Done' },
+];
 
 export class TodoPage extends React.Component {
   /**
    * when initial state category is not null, submit the form to load repos
    */
   componentDidMount() {
-    if (this.props.category && this.props.category.trim().length > 0) {
+    if (
+      this.props.category.value &&
+      this.props.category.value.trim().length > 0
+    ) {
       this.props.onSubmitForm();
     }
   }
@@ -53,6 +63,7 @@ export class TodoPage extends React.Component {
       error,
       todos,
     };
+    console.log(JSON.stringify(todoListProps, null, 2));
     return (
       <article>
         <Helmet>
@@ -75,13 +86,13 @@ export class TodoPage extends React.Component {
             <Form onSubmit={this.props.onSubmitForm}>
               <label htmlFor="username">
                 <FormattedMessage {...messages.todoListCategory} />
-                <Input
+                <Select
                   id="category"
-                  type="text"
-                  placeholder="work"
                   value={this.props.category}
                   onChange={this.props.onChangeCategory}
+                  options={options}
                 />
+                <Button onClick={this.props.onSubmitForm}>Submit</Button>
               </label>
             </Form>
             <TodoList {...todoListProps} />
@@ -97,13 +108,14 @@ TodoPage.propTypes = {
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   todos: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   onSubmitForm: PropTypes.func,
-  category: PropTypes.string,
+  category: PropTypes.object,
   onChangeCategory: PropTypes.func,
 };
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onChangeCategory: evt => dispatch(changeCategory(evt.target.value)),
+    onChangeCategory: selectedOption =>
+      dispatch(changeCategory(selectedOption)),
     onSubmitForm: evt => {
       if (evt !== undefined && evt.preventDefault) evt.preventDefault();
       dispatch(loadTodos());
@@ -112,7 +124,7 @@ export function mapDispatchToProps(dispatch) {
 }
 
 const mapStateToProps = createStructuredSelector({
-  todos: makeSelectTodos(),
+  todos: makeSelectTodosByCurrentStatus(),
   category: makeSelectTodoPageCategory(),
   loading: makeSelectLoading(),
   error: makeSelectError(),
