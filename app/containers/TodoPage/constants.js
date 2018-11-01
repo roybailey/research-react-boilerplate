@@ -11,3 +11,4 @@
  */
 
 export const CHANGE_CATEGORY = 'boilerplate/Todo/CHANGE_CATEGORY';
+export const CHANGE_STATUS = 'boilerplate/Todo/CHANGE_STATUS';

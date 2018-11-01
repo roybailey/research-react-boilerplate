@@ -15,7 +15,7 @@ Object {
   "@@redux-saga/IO": true,
   "CALL": Object {
     "args": Array [
-      "/api/todo",
+      "/api/todo?category=work",
     ],
     "context": null,
     "fn": [Function],
@@ -38,7 +38,7 @@ Object {
   "@@redux-saga/IO": true,
   "CALL": Object {
     "args": Array [
-      "/api/todo",
+      "/api/todo?category=work",
     ],
     "context": null,
     "fn": [Function],

@@ -1,14 +1,14 @@
-import { fromJS } from 'immutable';
-
+/* eslint-disable no-param-reassign */
+import produce from 'immer';
 import homeReducer from '../reducer';
 import { changeUsername } from '../actions';
 
 describe('homeReducer', () => {
   let state;
   beforeEach(() => {
-    state = fromJS({
+    state = {
       username: '',
-    });
+    };
   });
 
   it('should return the initial state', () => {
@@ -18,7 +18,10 @@ describe('homeReducer', () => {
 
   it('should handle the changeUsername action correctly', () => {
     const fixture = 'mxstbr';
-    const expectedResult = state.set('username', fixture);
+    const expectedResult = produce(state, draft => {
+      draft.username = fixture;
+      return draft;
+    });
 
     expect(homeReducer(state, changeUsername(fixture))).toEqual(expectedResult);
   });

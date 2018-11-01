@@ -10,14 +10,16 @@ import { compose } from 'redux';
 import { Helmet } from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
+import Select from 'react-select';
 
 import H1 from 'components/H1';
 import H2 from 'components/H2';
+import Button from 'components/Button';
 
 import {
-  makeSelectTodos,
   makeSelectLoading,
   makeSelectError,
+  makeSelectTodos,
 } from 'containers/App/selectors';
 
 import TodoList from 'components/TodoList';
@@ -31,28 +33,50 @@ import { loadTodos } from '../App/actions';
 
 import reducer from './reducer';
 import saga from './saga';
-import { changeCategory } from '../TodoPage/actions';
 import Form from '../HomePage/Form';
 import Input from '../HomePage/Input';
-import { makeSelectTodoPageCategory } from '../TodoPage/selectors';
+import { changeCategory, changeStatus } from '../TodoPage/actions';
+import {
+  makeSelectTodoPageCategory,
+  makeSelectTodoPageStatus,
+} from '../TodoPage/selectors';
+
+const options = [
+  { value: undefined, label: 'all' },
+  { value: 'NOT_STARTED', label: 'Todo' },
+  { value: 'IN_PROGRESS', label: 'In Progress' },
+  { value: 'FINISHED', label: 'Done' },
+];
 
 export class TodoPage extends React.Component {
   /**
    * when initial state category is not null, submit the form to load repos
    */
   componentDidMount() {
-    if (this.props.category && this.props.category.trim().length > 0) {
+    if (
+      this.props.category.value &&
+      this.props.category.value.trim().length > 0
+    ) {
       this.props.onSubmitForm();
     }
   }
 
   render() {
-    const { loading, error, todos } = this.props;
+    const { loading, error, todos, status } = this.props;
+    const filter = status && status.value ? status.value : '';
+    const filteredTodos = todos
+      ? todos.filter(todo => todo.status === filter || !filter)
+      : todos;
     const todoListProps = {
       loading,
       error,
-      todos,
+      todos: filteredTodos,
     };
+    console.log(
+      `\n${JSON.stringify(todos)}\n  filtered by ${filter}\n${JSON.stringify(
+        filteredTodos,
+      )}`,
+    );
     return (
       <article>
         <Helmet>
@@ -70,19 +94,34 @@ export class TodoPage extends React.Component {
           </CenteredSection>
           <Section>
             <H2>
-              <FormattedMessage {...messages.todoListHeader} />
+              <FormattedMessage {...messages.todoFormHeader} />
             </H2>
             <Form onSubmit={this.props.onSubmitForm}>
-              <label htmlFor="username">
-                <FormattedMessage {...messages.todoListCategory} />
+              <label htmlFor="category">
+                <FormattedMessage {...messages.todoFormCategory} />
                 <Input
                   id="category"
                   type="text"
                   placeholder="work"
-                  value={this.props.category}
-                  onChange={this.props.onChangeCategory}
+                  value={this.props.category.value || ''}
+                  onChange={evt =>
+                    this.props.onChangeCategory({ value: evt.target.value })
+                  }
                 />
               </label>
+              <br />
+              <br />
+              <label htmlFor="status">
+                <FormattedMessage {...messages.todoFormStatus} />
+                <Select
+                  id="status"
+                  value={this.props.status}
+                  onChange={this.props.onChangeStatus}
+                  options={options}
+                />
+              </label>
+              <br />
+              <Button onClick={this.props.onSubmitForm}>Submit</Button>
             </Form>
             <TodoList {...todoListProps} />
           </Section>
@@ -97,14 +136,18 @@ TodoPage.propTypes = {
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   todos: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   onSubmitForm: PropTypes.func,
-  category: PropTypes.string,
+  category: PropTypes.object,
+  status: PropTypes.object,
   onChangeCategory: PropTypes.func,
+  onChangeStatus: PropTypes.func,
 };
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onChangeCategory: evt => dispatch(changeCategory(evt.target.value)),
+    onChangeCategory: category => dispatch(changeCategory(category)),
+    onChangeStatus: selectedOption => dispatch(changeStatus(selectedOption)),
     onSubmitForm: evt => {
+      console.log('SUBMIT');
       if (evt !== undefined && evt.preventDefault) evt.preventDefault();
       dispatch(loadTodos());
     },
@@ -114,6 +157,7 @@ export function mapDispatchToProps(dispatch) {
 const mapStateToProps = createStructuredSelector({
   todos: makeSelectTodos(),
   category: makeSelectTodoPageCategory(),
+  status: makeSelectTodoPageStatus(),
   loading: makeSelectLoading(),
   error: makeSelectError(),
 });

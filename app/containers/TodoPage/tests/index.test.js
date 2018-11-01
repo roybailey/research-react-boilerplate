@@ -8,13 +8,13 @@ import { IntlProvider } from 'react-intl';
 
 import TodoList from 'components/TodoList';
 import { TodoPage, mapDispatchToProps } from '../index';
-import { changeCategory } from '../actions';
+import { changeCategory, changeStatus } from '../actions';
 import { loadTodos } from '../../App/actions';
 
 describe('<TodoPage />', () => {
   it('should render the todos list', () => {
     const renderedComponent = shallow(
-      <TodoPage loading error={false} todos={[]} />,
+      <TodoPage loading error={false} todos={[]} category={{}} />,
     );
     expect(
       renderedComponent.contains(<TodoList loading error={false} todos={[]} />),
@@ -26,7 +26,7 @@ describe('<TodoPage />', () => {
     mount(
       <IntlProvider locale="en">
         <TodoPage
-          category="work"
+          category={{ value: 'work ' }}
           onChangeCategory={() => {}}
           onSubmitForm={submitSpy}
         />
@@ -39,7 +39,11 @@ describe('<TodoPage />', () => {
     const submitSpy = jest.fn();
     mount(
       <IntlProvider locale="en">
-        <TodoPage onChangeCategory={() => {}} onSubmitForm={submitSpy} />
+        <TodoPage
+          category={{ value: '' }}
+          onChangeCategory={() => {}}
+          onSubmitForm={submitSpy}
+        />
       </IntlProvider>,
     );
     expect(submitSpy).not.toHaveBeenCalled();
@@ -50,7 +54,7 @@ describe('<TodoPage />', () => {
     mount(
       <IntlProvider locale="en">
         <TodoPage
-          category=""
+          category={{}}
           onChangeUsername={() => {}}
           onSubmitForm={submitSpy}
         />
@@ -60,19 +64,35 @@ describe('<TodoPage />', () => {
   });
 
   describe('mapDispatchToProps', () => {
-    describe('onChangeUsername', () => {
+    describe('onChangeCategory', () => {
       it('should be injected', () => {
         const dispatch = jest.fn();
         const result = mapDispatchToProps(dispatch);
         expect(result.onChangeCategory).toBeDefined();
       });
 
-      it('should dispatch changeUsername when called', () => {
+      it('should dispatch changeCategory when called', () => {
         const dispatch = jest.fn();
         const result = mapDispatchToProps(dispatch);
-        const category = 'work';
-        result.onChangeCategory({ target: { value: category } });
+        const category = { value: 'work' };
+        result.onChangeCategory(category);
         expect(dispatch).toHaveBeenCalledWith(changeCategory(category));
+      });
+    });
+
+    describe('onChangeStatus', () => {
+      it('should be injected', () => {
+        const dispatch = jest.fn();
+        const result = mapDispatchToProps(dispatch);
+        expect(result.onChangeStatus).toBeDefined();
+      });
+
+      it('should dispatch changeStatus when called', () => {
+        const dispatch = jest.fn();
+        const result = mapDispatchToProps(dispatch);
+        const status = { value: 'DONE' };
+        result.onChangeStatus(status);
+        expect(dispatch).toHaveBeenCalledWith(changeStatus(status));
       });
     });
 

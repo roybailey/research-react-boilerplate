@@ -15,11 +15,11 @@ import { makeSelectTodoPageCategory } from 'containers/TodoPage/selectors';
 export function* getTodos() {
   // Select category from store
   const category = yield select(makeSelectTodoPageCategory());
-  const requestURL = `/api/todo`;
+  const requestURL = `/api/todo?category=${category.value}`;
 
   try {
     // Call our request helper (see 'utils/request')
-    console.log(`Sending ${category} todo request ${requestURL}`);
+    console.log(`Sending todo request ${requestURL}`);
     const todos = yield call(request, requestURL);
     console.log(`Received\n${JSON.stringify(todos, null, 2)}`);
     yield put(todosLoaded(todos, category));

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /*
  * AppReducer
  *
@@ -10,7 +11,7 @@
  *   return state.set('yourStateVariable', true);
  */
 
-import { fromJS } from 'immutable';
+import { produce } from 'immer';
 
 import {
   LOAD_REPOS_SUCCESS,
@@ -22,44 +23,55 @@ import {
 } from './constants';
 
 // The initial state of the App
-const initialState = fromJS({
+const initialState = {
   loading: false,
   error: false,
   currentUser: false,
   userData: {
     repositories: false,
   },
-});
+  todoData: {
+    todos: false,
+  },
+};
 
 function appReducer(state = initialState, action) {
-  switch (action.type) {
-    case LOAD_REPOS:
-      return state
-        .set('loading', true)
-        .set('error', false)
-        .setIn(['userData', 'repositories'], false);
-    case LOAD_REPOS_SUCCESS:
-      return state
-        .setIn(['userData', 'repositories'], action.repos)
-        .set('loading', false)
-        .set('currentUser', action.username);
-    case LOAD_REPOS_ERROR:
-      return state.set('error', action.error).set('loading', false);
-    case LOAD_TODOS:
-      return state
-        .set('loading', true)
-        .set('error', false)
-        .setIn(['todoData', 'todos'], false);
-    case LOAD_TODOS_SUCCESS:
-      return state
-        .setIn(['todoData', 'todos'], action.todos)
-        .set('loading', false)
-        .set('category', action.category);
-    case LOAD_TODOS_ERROR:
-      return state.set('error', action.error).set('loading', false);
-    default:
-      return state;
-  }
+  return produce(state, draft => {
+    switch (action.type) {
+      case LOAD_REPOS:
+        draft.loading = true;
+        draft.error = false;
+        draft.userData.repositories = false;
+        break;
+      case LOAD_REPOS_SUCCESS:
+        draft.loading = false;
+        draft.currentUser = action.username;
+        draft.userData.repositories = action.repos;
+        break;
+      case LOAD_REPOS_ERROR:
+        draft.error = action.error;
+        draft.loading = false;
+        break;
+
+      case LOAD_TODOS:
+        draft.todoData.loading = true;
+        draft.todoData.error = false;
+        draft.todoData.todos = false;
+        break;
+      case LOAD_TODOS_SUCCESS:
+        draft.todoData.loading = false;
+        draft.todoData.category = action.category;
+        draft.todoData.todos = action.todos;
+        break;
+      case LOAD_TODOS_ERROR:
+        draft.loading = false;
+        draft.error = action.error;
+        break;
+      default:
+        break;
+    }
+    return draft;
+  });
 }
 
 export default appReducer;

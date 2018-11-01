@@ -15,18 +15,24 @@
  *    }
  */
 
-import { CHANGE_CATEGORY } from './constants';
+import { CHANGE_CATEGORY, CHANGE_STATUS } from './constants';
 
 /**
  * Changes the input field of the form
- *
- * @param  {category} category The new text of the input field
- *
- * @return {object}    An action object with a type of CHANGE_CATEGORY
  */
 export function changeCategory(category) {
   return {
     type: CHANGE_CATEGORY,
     category,
+  };
+}
+
+/**
+ * Changes the selection option of the form
+ */
+export function changeStatus(status) {
+  return {
+    type: CHANGE_STATUS,
+    status,
   };
 }

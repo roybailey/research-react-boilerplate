@@ -17,7 +17,9 @@ export class TodoListItem extends React.PureComponent {
     // Put together the content of the repository
     const content = (
       <Wrapper>
-        {item.title} - {item.status}
+        <div>{item.category}</div>
+        <div>{item.title}</div>
+        <div>{item.status}</div>
       </Wrapper>
     );
 
