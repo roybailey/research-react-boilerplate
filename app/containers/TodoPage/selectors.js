@@ -5,11 +5,9 @@
 import { createSelector } from 'reselect';
 import { initialState } from './reducer';
 
-const selectTodoPageStore = state => state.get('todoPage', initialState);
+const selectTodoPageStore = state => state.todoPage || initialState;
 
 const makeSelectTodoPageCategory = () =>
-  createSelector(selectTodoPageStore, todoPageState =>
-    todoPageState.get('category'),
-  );
+  createSelector(selectTodoPageStore, todoPageState => todoPageState.category);
 
 export { selectTodoPageStore, makeSelectTodoPageCategory };

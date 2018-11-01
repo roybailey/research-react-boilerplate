@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /*
  * TodoReducer
  *
@@ -9,21 +10,23 @@
  * case YOUR_ACTION_CONSTANT:
  *   return state.set('yourStateVariable', true);
  */
-import { fromJS } from 'immutable';
-
+import produce from 'immer';
 import { CHANGE_CATEGORY } from './constants';
 
 // The initial state of the App
-export const initialState = fromJS({ category: {} });
+export const initialState = { category: {} };
 
 function todoPageReducer(state = initialState, action) {
-  switch (action.type) {
-    case CHANGE_CATEGORY:
-      console.log(`changing category ${action.category}`);
-      return state.set('category', action.category);
-    default:
-      return state;
-  }
+  return produce(state, draft => {
+    switch (action.type) {
+      case CHANGE_CATEGORY:
+        draft.category = action.category;
+        break;
+      default:
+        break;
+    }
+    return draft;
+  });
 }
 
 export default todoPageReducer;

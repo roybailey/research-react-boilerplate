@@ -1,9 +1,10 @@
+/* eslint-disable default-case,no-param-reassign */
 /**
  * Combine all reducers in this file and export the combined reducers.
  */
 
-import { combineReducers } from 'redux-immutable';
-import { fromJS } from 'immutable';
+import produce from 'immer';
+import { combineReducers } from 'redux';
 import { LOCATION_CHANGE } from 'react-router-redux';
 
 import languageProviderReducer from 'containers/LanguageProvider/reducer';
@@ -17,23 +18,22 @@ import languageProviderReducer from 'containers/LanguageProvider/reducer';
  */
 
 // Initial routing state
-const routeInitialState = fromJS({
+const routeInitialState = {
   location: null,
-});
+};
 
 /**
  * Merge route into the global application state
  */
 export function routeReducer(state = routeInitialState, action) {
-  switch (action.type) {
-    /* istanbul ignore next */
-    case LOCATION_CHANGE:
-      return state.merge({
-        location: action.payload,
-      });
-    default:
-      return state;
-  }
+  return produce(state, draft => {
+    switch (action.type) {
+      /* istanbul ignore next */
+      case LOCATION_CHANGE:
+        draft.location = action.payload;
+        break;
+    }
+  });
 }
 
 /**

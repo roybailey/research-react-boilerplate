@@ -1,5 +1,5 @@
-import { fromJS } from 'immutable';
-
+/* eslint-disable no-param-reassign,no-unused-vars */
+import produce from 'immer';
 import appReducer from '../reducer';
 import {
   loadRepos,
@@ -13,17 +13,17 @@ import {
 describe('appReducer', () => {
   let state;
   beforeEach(() => {
-    state = fromJS({
+    state = {
       loading: false,
       error: false,
       currentUser: false,
-      userData: fromJS({
+      userData: {
         repositories: false,
-      }),
-      todoData: fromJS({
+      },
+      todoData: {
         todos: false,
-      }),
-    });
+      },
+    };
   });
 
   it('should return the initial state', () => {
@@ -32,10 +32,11 @@ describe('appReducer', () => {
   });
 
   it('should handle the loadRepos action correctly', () => {
-    const expectedResult = state
-      .set('loading', true)
-      .set('error', false)
-      .setIn(['userData', 'repositories'], false);
+    const expectedResult = produce(state, draft => {
+      draft.loading = true;
+      draft.error = false;
+      draft.userData.repositories = false;
+    });
 
     expect(appReducer(state, loadRepos())).toEqual(expectedResult);
   });
@@ -47,10 +48,11 @@ describe('appReducer', () => {
       },
     ];
     const username = 'test';
-    const expectedResult = state
-      .setIn(['userData', 'repositories'], fixture)
-      .set('loading', false)
-      .set('currentUser', username);
+    const expectedResult = produce(state, draft => {
+      draft.loading = false;
+      draft.currentUser = username;
+      draft.userData.repositories = fixture;
+    });
 
     expect(appReducer(state, reposLoaded(fixture, username))).toEqual(
       expectedResult,
@@ -61,7 +63,10 @@ describe('appReducer', () => {
     const fixture = {
       msg: 'Not found',
     };
-    const expectedResult = state.set('error', fixture).set('loading', false);
+    const expectedResult = produce(state, draft => {
+      draft.loading = false;
+      draft.error = fixture;
+    });
 
     expect(appReducer(state, repoLoadingError(fixture))).toEqual(
       expectedResult,
@@ -73,11 +78,11 @@ describe('appReducer', () => {
   //
 
   it('should handle the loadTodos action correctly', () => {
-    const expectedResult = state
-      .setIn(['todoData', 'loading'], true)
-      .setIn(['todoData', 'error'], false)
-      .setIn(['todoData', 'todos'], false);
-
+    const expectedResult = produce(state, draft => {
+      state.todoData.loading = true;
+      state.todoData.error = false;
+      state.todoData.todos = false;
+    });
     expect(appReducer(state, loadTodos())).toEqual(expectedResult);
   });
 
@@ -88,10 +93,11 @@ describe('appReducer', () => {
       },
     ];
     const category = 'work';
-    const expectedResult = state
-      .setIn(['todoData', 'todos'], fixture)
-      .setIn(['todoData', 'loading'], false)
-      .setIn(['todoData', 'category'], category);
+    const expectedResult = produce(state, draft => {
+      draft.todoData.loading = false;
+      draft.todoData.category = category;
+      draft.todoData.todos = fixture;
+    });
 
     expect(appReducer(state, todosLoaded(fixture, category))).toEqual(
       expectedResult,
@@ -102,9 +108,10 @@ describe('appReducer', () => {
     const fixture = {
       msg: 'Not found',
     };
-    const expectedResult = state
-      .setIn(['todoData', 'error'], fixture)
-      .setIn(['todoData', 'loading'], false);
+    const expectedResult = produce(state, draft => {
+      draft.loading = false;
+      draft.error = fixture;
+    });
 
     expect(appReducer(state, todosLoadingError(fixture))).toEqual(
       expectedResult,
