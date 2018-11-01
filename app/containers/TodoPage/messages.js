@@ -10,12 +10,16 @@ export default defineMessages({
     id: 'boilerplate.containers.TodoPage.header',
     defaultMessage: 'Todos',
   },
-  todoListHeader: {
-    id: 'boilerplate.containers.TodoPage.todoListHeader',
+  todoFormHeader: {
+    id: 'boilerplate.containers.TodoPage.todoFormHeader',
     defaultMessage: 'Todo List',
   },
-  todoListCategory: {
-    id: 'boilerplate.containers.TodoPage.todoListCategory',
-    defaultMessage: 'category',
+  todoFormCategory: {
+    id: 'boilerplate.containers.TodoPage.todoFormCategory',
+    defaultMessage: "category (either 'work' or 'home') ",
+  },
+  todoFormStatus: {
+    id: 'boilerplate.containers.TodoPage.todoFormStatus',
+    defaultMessage: 'status',
   },
 });

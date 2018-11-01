@@ -17,9 +17,9 @@ import H2 from 'components/H2';
 import Button from 'components/Button';
 
 import {
-  makeSelectTodosByCurrentStatus,
   makeSelectLoading,
   makeSelectError,
+  makeSelectTodos,
 } from 'containers/App/selectors';
 
 import TodoList from 'components/TodoList';
@@ -33,11 +33,16 @@ import { loadTodos } from '../App/actions';
 
 import reducer from './reducer';
 import saga from './saga';
-import { changeCategory } from '../TodoPage/actions';
 import Form from '../HomePage/Form';
-import { makeSelectTodoPageCategory } from '../TodoPage/selectors';
+import Input from '../HomePage/Input';
+import { changeCategory, changeStatus } from '../TodoPage/actions';
+import {
+  makeSelectTodoPageCategory,
+  makeSelectTodoPageStatus,
+} from '../TodoPage/selectors';
 
 const options = [
+  { value: undefined, label: 'all' },
   { value: 'NOT_STARTED', label: 'Todo' },
   { value: 'IN_PROGRESS', label: 'In Progress' },
   { value: 'FINISHED', label: 'Done' },
@@ -57,13 +62,21 @@ export class TodoPage extends React.Component {
   }
 
   render() {
-    const { loading, error, todos } = this.props;
+    const { loading, error, todos, status } = this.props;
+    const filter = status && status.value ? status.value : '';
+    const filteredTodos = todos
+      ? todos.filter(todo => todo.status === filter || !filter)
+      : todos;
     const todoListProps = {
       loading,
       error,
-      todos,
+      todos: filteredTodos,
     };
-    console.log(JSON.stringify(todoListProps, null, 2));
+    console.log(
+      `\n${JSON.stringify(todos)}\n  filtered by ${filter}\n${JSON.stringify(
+        filteredTodos,
+      )}`,
+    );
     return (
       <article>
         <Helmet>
@@ -81,19 +94,34 @@ export class TodoPage extends React.Component {
           </CenteredSection>
           <Section>
             <H2>
-              <FormattedMessage {...messages.todoListHeader} />
+              <FormattedMessage {...messages.todoFormHeader} />
             </H2>
             <Form onSubmit={this.props.onSubmitForm}>
-              <label htmlFor="username">
-                <FormattedMessage {...messages.todoListCategory} />
-                <Select
+              <label htmlFor="category">
+                <FormattedMessage {...messages.todoFormCategory} />
+                <Input
                   id="category"
-                  value={this.props.category}
-                  onChange={this.props.onChangeCategory}
+                  type="text"
+                  placeholder="work"
+                  value={this.props.category.value || ''}
+                  onChange={evt =>
+                    this.props.onChangeCategory({ value: evt.target.value })
+                  }
+                />
+              </label>
+              <br />
+              <br />
+              <label htmlFor="status">
+                <FormattedMessage {...messages.todoFormStatus} />
+                <Select
+                  id="status"
+                  value={this.props.status}
+                  onChange={this.props.onChangeStatus}
                   options={options}
                 />
-                <Button onClick={this.props.onSubmitForm}>Submit</Button>
               </label>
+              <br />
+              <Button onClick={this.props.onSubmitForm}>Submit</Button>
             </Form>
             <TodoList {...todoListProps} />
           </Section>
@@ -109,14 +137,17 @@ TodoPage.propTypes = {
   todos: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   onSubmitForm: PropTypes.func,
   category: PropTypes.object,
+  status: PropTypes.object,
   onChangeCategory: PropTypes.func,
+  onChangeStatus: PropTypes.func,
 };
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onChangeCategory: selectedOption =>
-      dispatch(changeCategory(selectedOption)),
+    onChangeCategory: category => dispatch(changeCategory(category)),
+    onChangeStatus: selectedOption => dispatch(changeStatus(selectedOption)),
     onSubmitForm: evt => {
+      console.log('SUBMIT');
       if (evt !== undefined && evt.preventDefault) evt.preventDefault();
       dispatch(loadTodos());
     },
@@ -124,8 +155,9 @@ export function mapDispatchToProps(dispatch) {
 }
 
 const mapStateToProps = createStructuredSelector({
-  todos: makeSelectTodosByCurrentStatus(),
+  todos: makeSelectTodos(),
   category: makeSelectTodoPageCategory(),
+  status: makeSelectTodoPageStatus(),
   loading: makeSelectLoading(),
   error: makeSelectError(),
 });

@@ -1,4 +1,8 @@
-import { selectTodoPageStore, makeSelectTodoPageCategory } from '../selectors';
+import {
+  selectTodoPageStore,
+  makeSelectTodoPageCategory,
+  makeSelectTodoPageStatus,
+} from '../selectors';
 
 describe('selectTodoPageStore', () => {
   it('should select the todo root state', () => {
@@ -16,5 +20,14 @@ describe('makeSelectTodoPageCategory', () => {
     const category = 'work';
     const mockedState = { todoPage: { category } };
     expect(categorySelector(mockedState)).toEqual(category);
+  });
+});
+
+describe('makeSelectTodoPageStatus', () => {
+  const categorySelector = makeSelectTodoPageStatus();
+  it('should select the status', () => {
+    const status = 'DONE';
+    const mockedState = { todoPage: { status } };
+    expect(categorySelector(mockedState)).toEqual(status);
   });
 });

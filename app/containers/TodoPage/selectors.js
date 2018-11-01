@@ -10,4 +10,11 @@ const selectTodoPageStore = state => state.todoPage || initialState;
 const makeSelectTodoPageCategory = () =>
   createSelector(selectTodoPageStore, todoPageState => todoPageState.category);
 
-export { selectTodoPageStore, makeSelectTodoPageCategory };
+const makeSelectTodoPageStatus = () =>
+  createSelector(selectTodoPageStore, todoPageState => todoPageState.status);
+
+export {
+  selectTodoPageStore,
+  makeSelectTodoPageCategory,
+  makeSelectTodoPageStatus,
+};

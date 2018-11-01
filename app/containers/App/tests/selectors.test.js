@@ -1,5 +1,3 @@
-import { LOAD_TODOS_SUCCESS } from '../constants';
-import appReducer from '../reducer';
 import {
   selectGlobal,
   makeSelectCurrentUser,
@@ -7,7 +5,6 @@ import {
   makeSelectError,
   makeSelectRepos,
   makeSelectTodos,
-  makeSelectTodosByCurrentStatus,
   makeSelectLocation,
 } from '../selectors';
 
@@ -90,8 +87,9 @@ describe('makeSelectTodos', () => {
   });
 });
 
+/*
 describe('makeSelectTodoByCurrentStatus', () => {
-  const todosSelector = makeSelectTodosByCurrentStatus();
+  const todosSelector = makeSelectTodosByCurrentStatus('WORK');
   it('should select the todos by status', () => {
     const todos = [
       { title: 'something todo', status: 'TODO' },
@@ -107,14 +105,12 @@ describe('makeSelectTodoByCurrentStatus', () => {
     };
     mockedState.global = appReducer(mockedState.global, {
       type: LOAD_TODOS_SUCCESS,
-      category: {
-        value: 'WORK',
-      },
       todos,
     });
     expect(todosSelector(mockedState)).toEqual(todoInprogress);
   });
 });
+*/
 
 describe('makeSelectLocation', () => {
   const locationStateSelector = makeSelectLocation();

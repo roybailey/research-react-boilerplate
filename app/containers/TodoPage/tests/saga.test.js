@@ -1,3 +1,4 @@
+/* eslint-disable redux-saga/yield-effects */
 /**
  * Tests for HomePage sagas
  */
@@ -9,9 +10,8 @@ import { todosLoaded, todosLoadingError } from 'containers/App/actions';
 
 import todoData, { getTodos } from '../saga';
 
-const username = 'mxstbr';
+const category = { value: 'work' };
 
-/* eslint-disable redux-saga/yield-effects */
 describe('getTodos Saga', () => {
   let getTodosGenerator;
 
@@ -23,7 +23,7 @@ describe('getTodos Saga', () => {
     const selectDescriptor = getTodosGenerator.next().value;
     expect(selectDescriptor).toMatchSnapshot();
 
-    const callDescriptor = getTodosGenerator.next(username).value;
+    const callDescriptor = getTodosGenerator.next(category).value;
     expect(callDescriptor).toMatchSnapshot();
   });
 
@@ -37,7 +37,7 @@ describe('getTodos Saga', () => {
       },
     ];
     const putDescriptor = getTodosGenerator.next(response).value;
-    expect(putDescriptor).toEqual(put(todosLoaded(response, username)));
+    expect(putDescriptor).toEqual(put(todosLoaded(response, category)));
   });
 
   it('should call the todoLoadingError action if the response errors', () => {

@@ -23,15 +23,6 @@ const makeSelectRepos = () =>
     globalState => globalState.userData.repositories,
   );
 
-const makeSelectTodosByCurrentStatus = () =>
-  createSelector(selectGlobal, globalState => {
-    const status = globalState.todoData.category;
-    const hasData = globalState.todoData.todos;
-    return hasData
-      ? hasData.filter(todo => todo.status === status.value)
-      : hasData;
-  });
-
 const makeSelectTodos = () =>
   createSelector(selectGlobal, globalState => globalState.todoData.todos);
 
@@ -44,7 +35,6 @@ export {
   makeSelectLoading,
   makeSelectError,
   makeSelectRepos,
-  makeSelectTodosByCurrentStatus,
   makeSelectTodos,
   makeSelectLocation,
 };

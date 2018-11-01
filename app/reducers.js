@@ -1,8 +1,8 @@
-/* eslint-disable no-param-reassign */
+/* eslint-disable no-param-reassign,default-case */
 /**
  * Combine all reducers in this file and export the combined reducers.
  */
-
+import produce from 'immer';
 import { combineReducers } from 'redux';
 import { LOCATION_CHANGE } from 'react-router-redux';
 
@@ -16,7 +16,6 @@ import languageProviderReducer from 'containers/LanguageProvider/reducer';
  * The change is necessitated by moving to react-router-redux@5
  *
  */
-import produce from 'immer';
 
 // Initial routing state
 const routeInitialState = {
@@ -33,10 +32,7 @@ export function routeReducer(state = routeInitialState, action) {
       case LOCATION_CHANGE:
         draft.location = action.payload;
         break;
-      default:
-        break;
     }
-    return draft;
   });
 }
 

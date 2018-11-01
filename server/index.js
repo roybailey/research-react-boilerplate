@@ -19,7 +19,7 @@ const app = express();
 const todos = require('./todos');
 const todoRouter = express.Router();
 todoRouter.get('/', (req, res) => {
-  res.json(todos);
+  res.json(todos.filter(todo => todo.category === req.query.category));
 });
 app.use('/api/todo', todoRouter);
 

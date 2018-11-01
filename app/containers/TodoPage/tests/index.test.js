@@ -8,7 +8,7 @@ import { IntlProvider } from 'react-intl';
 
 import TodoList from 'components/TodoList';
 import { TodoPage, mapDispatchToProps } from '../index';
-import { changeCategory } from '../actions';
+import { changeCategory, changeStatus } from '../actions';
 import { loadTodos } from '../../App/actions';
 
 describe('<TodoPage />', () => {
@@ -64,7 +64,7 @@ describe('<TodoPage />', () => {
   });
 
   describe('mapDispatchToProps', () => {
-    describe('onChangeUsername', () => {
+    describe('onChangeCategory', () => {
       it('should be injected', () => {
         const dispatch = jest.fn();
         const result = mapDispatchToProps(dispatch);
@@ -77,6 +77,22 @@ describe('<TodoPage />', () => {
         const category = { value: 'work' };
         result.onChangeCategory(category);
         expect(dispatch).toHaveBeenCalledWith(changeCategory(category));
+      });
+    });
+
+    describe('onChangeStatus', () => {
+      it('should be injected', () => {
+        const dispatch = jest.fn();
+        const result = mapDispatchToProps(dispatch);
+        expect(result.onChangeStatus).toBeDefined();
+      });
+
+      it('should dispatch changeStatus when called', () => {
+        const dispatch = jest.fn();
+        const result = mapDispatchToProps(dispatch);
+        const status = { value: 'DONE' };
+        result.onChangeStatus(status);
+        expect(dispatch).toHaveBeenCalledWith(changeStatus(status));
       });
     });
 
