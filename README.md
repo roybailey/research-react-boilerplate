@@ -18,5 +18,5 @@ exploring a more production ready react application template.
 
 - DONE: Take the basic template generated from `react-boilerplate` for a spin
 - DONE: Add a simple Todo Page, API and necessary wiring through `redux` and `redux-sagas` to see how to extend the application
-- TODO: Remove `immutable` and replace with `immer` to improve code maintenance (and replace mix of immutable and non-immutable data in the store)
-- TODO: Add both API driven filter (category) and Page driven Selector (status) on Todo Page 
+- DONE: Remove `immutable` and replace with `immer` to improve code maintenance (and replace mix of immutable and non-immutable data in the store)
+- DONE: Add both API driven filter (category) and Page driven Selector (status) on Todo Page 
