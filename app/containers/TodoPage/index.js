@@ -14,13 +14,8 @@ import Select from 'react-select';
 
 import H1 from 'components/H1';
 import H2 from 'components/H2';
-import Button from 'components/Button';
 
-import {
-  makeSelectLoading,
-  makeSelectError,
-  makeSelectTodos,
-} from 'containers/App/selectors';
+import { makeSelectLoading, makeSelectError } from 'containers/App/selectors';
 
 import TodoList from 'components/TodoList';
 import injectReducer from 'utils/injectReducer';
@@ -39,6 +34,7 @@ import { changeCategory, changeStatus } from '../TodoPage/actions';
 import {
   makeSelectTodoPageCategory,
   makeSelectTodoPageStatus,
+  makeSelectTodoByStatus,
 } from '../TodoPage/selectors';
 
 const options = [
@@ -64,19 +60,11 @@ export class TodoPage extends React.Component {
   render() {
     const { loading, error, todos, status } = this.props;
     const filter = status && status.value ? status.value : '';
-    const filteredTodos = todos
-      ? todos.filter(todo => todo.status === filter || !filter)
-      : todos;
     const todoListProps = {
       loading,
       error,
-      todos: filteredTodos,
+      todos,
     };
-    console.log(
-      `\n${JSON.stringify(todos)}\n  filtered by ${filter}\n${JSON.stringify(
-        filteredTodos,
-      )}`,
-    );
     return (
       <article>
         <Helmet>
@@ -115,13 +103,13 @@ export class TodoPage extends React.Component {
                 <FormattedMessage {...messages.todoFormStatus} />
                 <Select
                   id="status"
-                  value={this.props.status}
+                  value={filter}
                   onChange={this.props.onChangeStatus}
                   options={options}
                 />
               </label>
               <br />
-              <Button onClick={this.props.onSubmitForm}>Submit</Button>
+              <input type="submit" value="Submit" />
             </Form>
             <TodoList {...todoListProps} />
           </Section>
@@ -155,7 +143,7 @@ export function mapDispatchToProps(dispatch) {
 }
 
 const mapStateToProps = createStructuredSelector({
-  todos: makeSelectTodos(),
+  todos: makeSelectTodoByStatus(),
   category: makeSelectTodoPageCategory(),
   status: makeSelectTodoPageStatus(),
   loading: makeSelectLoading(),

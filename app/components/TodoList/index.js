@@ -19,7 +19,6 @@ function TodoList({ loading, error, todos }) {
   }
 
   if (todos && todos !== false) {
-    console.log(`TodoList : ${todos !== false} ${JSON.stringify(todos)} `);
     return <List items={todos} component={TodoListItem} />;
   }
 

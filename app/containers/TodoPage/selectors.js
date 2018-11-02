@@ -4,17 +4,22 @@
 
 import { createSelector } from 'reselect';
 import { initialState } from './reducer';
+import { makeSelectTodos } from '../App/selectors';
 
-const selectTodoPageStore = state => state.todoPage || initialState;
+export const selectTodoPageStore = state => state.todoPage || initialState;
 
-const makeSelectTodoPageCategory = () =>
+export const makeSelectTodoPageCategory = () =>
   createSelector(selectTodoPageStore, todoPageState => todoPageState.category);
 
-const makeSelectTodoPageStatus = () =>
+export const makeSelectTodoPageStatus = () =>
   createSelector(selectTodoPageStore, todoPageState => todoPageState.status);
 
-export {
-  selectTodoPageStore,
-  makeSelectTodoPageCategory,
-  makeSelectTodoPageStatus,
-};
+export const makeSelectTodoByStatus = () =>
+  createSelector(
+    makeSelectTodoPageStatus(),
+    makeSelectTodos(),
+    (status, todos) =>
+      todos
+        ? todos.filter(todo => !status.value || todo.status === status.value)
+        : todos,
+  );
